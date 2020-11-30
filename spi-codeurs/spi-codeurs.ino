@@ -49,19 +49,33 @@ void reset()
 // SPI interrupt routine
 ISR (SPI_STC_vect)
 {
-  byte c = SPDR;
-
-  if(c == 1)
+  byte cmd = SPDR;
+  
+  switch (cmd)
   {
-     SPDR = nbTicD;
-  }
-  else if(c == 2)
-  {
-    SPDR = nbTicG;
-  }
-  else
-  {
-    reset();
+    case 'd':
+    {
+      SPDR = c - 'd' + nbTicD;
+    }
+    break;
+      
+    case 'g':
+    {
+       SPDR = c - 'g'+ nbTicG;
+    }
+    break;
+      
+    case 'r':
+    {
+      reset();
+    }
+    break;
+      
+    default:
+    {
+      reset();
+    }
+    break;
   }
 }  
 
