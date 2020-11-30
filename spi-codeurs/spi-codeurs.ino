@@ -21,7 +21,9 @@
 volatile int nbTicD; //compteur de ticks codeur droit
 volatile int nbTicG; // compteur de ticks codeur gauche
 
-bool debug = false;
+bool debug = true;
+
+bool firstAsk = true;
 
 void setup()
 {
@@ -53,57 +55,41 @@ void reset()
 ISR (SPI_STC_vect)
 {
   byte cmd = SPDR;
-  
-  switch (cmd)
+
+  if(debug)
   {
-    case 'd':
-    {
-      SPDR = c - 'd' + nbTicD;
-      
-      if(debug)
-      {
-        Serial.print ("nbTicD : ");
-        Serial.print (nbTicD);
-        Serial.print (" send spi : ");
-        Serial.println (SPDR);
-      }
-    }
-    break;
-      
-    case 'g':
-    {
-       SPDR = c - 'g'+ nbTicG;
-      
-      if(debug)
-      {
-        Serial.print ("nbTicG : ");
-        Serial.print (nbTicG);
-        Serial.print (" send spi : ");
-        Serial.println (SPDR);
-      }
-    }
-    break;
-      
-    case 'r':
-    {
-      if(debug)
-      {
-        Serial.println ("Reset Codeurs");
-      }
-      reset();
-    }
-    break;
-      
-    default:
-    {
-      if(debug)
-      {
-        Serial.println ("Reset Codeurs");
-      }
-      reset();
-    }
-    break;
+    Serial.print ("cmd : ");
+    Serial.println (cmd);
+
+    /*Serial.print ("nbTicD : ");
+    Serial.println (nbTicD);
+
+    Serial.print ("nbTicG : ");
+    Serial.println (nbTicG);*/
   }
+
+  if(firstAsk == true)
+  {
+    SPDR = cmd + nbTicD;
+    firstAsk = false;
+    if(debug)
+    {
+      Serial.print ("nbTicD : ");
+      Serial.println (nbTicD);
+    }
+  }
+  else
+  {
+    SPDR = cmd + nbTicG;
+    firstAsk = true;
+    
+    if(debug)
+    {
+      Serial.print ("nbTicG : ");
+      Serial.println (nbTicG);
+    }
+  }
+   
 }  
 
 void loop()
