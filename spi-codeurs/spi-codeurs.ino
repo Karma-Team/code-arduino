@@ -25,6 +25,9 @@ bool debug = false;
 
 void setup()
 {
+  if(debug)
+    Serial.begin (115200);   // debugging
+  
   reset();
     
   // have to send on master in, *slave out*
@@ -56,23 +59,47 @@ ISR (SPI_STC_vect)
     case 'd':
     {
       SPDR = c - 'd' + nbTicD;
+      
+      if(debug)
+      {
+        Serial.print ("nbTicD : ");
+        Serial.print (nbTicD);
+        Serial.print (" send spi : ");
+        Serial.println (SPDR);
+      }
     }
     break;
       
     case 'g':
     {
        SPDR = c - 'g'+ nbTicG;
+      
+      if(debug)
+      {
+        Serial.print ("nbTicG : ");
+        Serial.print (nbTicG);
+        Serial.print (" send spi : ");
+        Serial.println (SPDR);
+      }
     }
     break;
       
     case 'r':
     {
+      if(debug)
+      {
+        Serial.println ("Reset Codeurs");
+      }
       reset();
     }
     break;
       
     default:
     {
+      if(debug)
+      {
+        Serial.println ("Reset Codeurs");
+      }
       reset();
     }
     break;
